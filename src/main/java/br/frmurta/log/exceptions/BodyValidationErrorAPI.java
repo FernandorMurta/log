@@ -4,12 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
 import java.util.List;
 
+/**
+ * @author Fernando Murta
+ * @version 0.0.1
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +27,10 @@ public class BodyValidationErrorAPI {
 	@Getter
 	private String message;
 
+	/**
+	 * @author Fernando Murta
+	 * @version 0.0.1
+	 */
 	@Data
 	@AllArgsConstructor
 	public static class Fields {
@@ -32,6 +39,11 @@ public class BodyValidationErrorAPI {
 
 		private String defaultMessage;
 
+		/**
+		 * Constructor
+		 *
+		 * @param objectError Object Error from the Request
+		 */
 		public Fields(ObjectError objectError) {
 			if (objectError instanceof FieldError) {
 				FieldError fieldError = (FieldError) objectError;

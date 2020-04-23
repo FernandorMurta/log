@@ -21,21 +21,44 @@ public class LogServiceImpl implements LogService {
 
 	private final LogRepository logRepository;
 
+	/**
+	 * Constructor to DI
+	 *
+	 * @param logRepository Log Repository Implementation
+	 */
 	@Autowired
 	LogServiceImpl(LogRepository logRepository) {
 		this.logRepository = logRepository;
 	}
 
+	/**
+	 * Method to find one Log by ID
+	 *
+	 * @param id ID to use in the Search
+	 * @return DTO Object from the Log found
+	 */
 	@Override
 	public LogDTO findOneLog(Long id) {
 		return LogDTO.fromEntity(this.logRepository.findById(id).orElseThrow(LogNotFoundException::new));
 	}
 
+	/**
+	 * Method to save a new Log
+	 *
+	 * @param logDTO DTO Object representing a new Log entity
+	 * @return DTO Object representing a new saved Log entity
+	 */
 	@Override
 	public LogDTO saveLog(LogDTO logDTO) {
 		return LogDTO.fromEntity(this.logRepository.save(LogDTO.toEntity(logDTO)));
 	}
 
+	/**
+	 * Method to update a Log
+	 *
+	 * @param id     ID to use in the update
+	 * @param logDTO DTO Object representing a new Log entity
+	 */
 	@Override
 	public void updateLog(Long id, LogDTO logDTO) {
 		if (!id.equals(logDTO.getId())) {
@@ -45,12 +68,26 @@ public class LogServiceImpl implements LogService {
 		this.logRepository.save(LogDTO.toEntity(logDTO));
 	}
 
+	/**
+	 * Method to delete a Log
+	 *
+	 * @param id ID to use in the update
+	 */
 	@Override
 	public void deleteLog(Long id) {
 		this.logRepository.findById(id).orElseThrow(LogNotFoundException::new);
 		this.logRepository.deleteById(id);
 	}
 
+	/**
+	 * Method to find Logs with parameters
+	 *
+	 * @param dateStart Date start to the range
+	 * @param dateEnd   Date end to the range
+	 * @param ip        IP used
+	 * @param pageable  Pageable object with Page and Qtd of results
+	 * @return A Page Object
+	 */
 	@Override
 	public Page<Log> findAllWithParams(Date dateStart, Date dateEnd, String ip, Pageable pageable) {
 		if (dateStart == null && dateEnd == null) {

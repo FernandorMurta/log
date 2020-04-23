@@ -1,11 +1,19 @@
 package br.frmurta.log.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+/**
+ * @author Fernando Murta
+ * @version 0.0.1
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,6 +42,12 @@ public class LogDTO {
 	@NotNull(message = "User Agent não pode ser Nulo")
 	private String userAgent;
 
+	/**
+	 * Method to transform a entity to a DTO Object
+	 *
+	 * @param log Entity Log
+	 * @return A new Object DTO
+	 */
 	public static LogDTO fromEntity(Log log) {
 		return LogDTO.builder()
 				.id(log.getId())
@@ -47,6 +61,12 @@ public class LogDTO {
 				.build();
 	}
 
+	/**
+	 * Method to transform a DTP to a Entity
+	 *
+	 * @param log DTO Object representing a  Log
+	 * @return A new Entity
+	 */
 	public static Log toEntity(LogDTO log) {
 		return Log.builder()
 				.id(log.getId())

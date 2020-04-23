@@ -1,7 +1,6 @@
 package br.frmurta.log.exceptions;
 
 
-import br.frmurta.log.core.CoreException;
 import br.frmurta.log.core.CoreRuntimeException;
 
 /**

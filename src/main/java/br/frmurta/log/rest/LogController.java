@@ -2,11 +2,15 @@ package br.frmurta.log.rest;
 
 import br.frmurta.log.exceptions.LogIdDoesNotMatchException;
 import br.frmurta.log.exceptions.LogNotFoundException;
-import br.frmurta.log.model.Log;
 import br.frmurta.log.model.LogDTO;
 import br.frmurta.log.exceptions.BodyValidationErrorAPI;
 import br.frmurta.log.util.Slf4jLog;
-import io.swagger.annotations.*;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +18,16 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -37,11 +50,22 @@ public class LogController {
 
 	private final LogService logService;
 
+	/**
+	 * Constructor to DI
+	 *
+	 * @param logService Log Service Implementation
+	 */
 	@Autowired
 	public LogController(LogServiceImpl logService) {
 		this.logService = logService;
 	}
 
+	/**
+	 * Method do expose a Endpoint to find one log using his ID
+	 *
+	 * @param id ID of Log to use in the search
+	 * @return One LogDTO object representing the entity
+	 */
 	@GetMapping(value = "/{id}", produces = "application/json")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Success", response = LogDTO.class),
@@ -49,7 +73,8 @@ public class LogController {
 			@ApiResponse(code = 500, message = "Internal Server Error", response = ResponseStatusException.class)
 	})
 	@ApiOperation(value = "Return one Log from the database with the ID in the Path")
-	public ResponseEntity<?> findOneLog(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<?> findOneLog(
+			@PathVariable(value = "id") Long id) {
 		Slf4jLog.info("=== Find one Log with ID: " + id);
 		try {
 			return ResponseEntity
@@ -64,6 +89,16 @@ public class LogController {
 		}
 	}
 
+	/**
+	 * Method do expose a Endpoint to  find Logs with parameters
+	 *
+	 * @param dateStart Date start to the range
+	 * @param dateEnd   Date end to the range
+	 * @param ip        IP used
+	 * @param page      Page number to search
+	 * @param qtd       Qtd of objects returned in the list
+	 * @return List of results using this parameters
+	 */
 	@GetMapping(value = "/find", produces = "application/json")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Success", response = Page.class),
@@ -71,22 +106,23 @@ public class LogController {
 	})
 	@ApiOperation(value = "Return A list of Log from the database with the Params used, " +
 			"this list will be returned on content object from Page ")
-	public ResponseEntity<?> findAllWithParams(@RequestParam(value = "dateStart", required = false)
-											   @DateTimeFormat(pattern = "dd/MM/yyyy")
-											   @ApiParam(value = "dataStart", example = "25/04/2020") Date dataStart,
-											   @RequestParam(value = "dateEnd", required = false)
-											   @DateTimeFormat(pattern = "dd/MM/yyyy")
-											   @ApiParam(value = "dataEnd", example = "25/04/2020") Date dateEnd,
-											   @RequestParam(value = "ip", required = false)
-											   @ApiParam(value = "ip", example = "192.168.0.125") String ip,
-											   @RequestParam(value = "page", defaultValue = "0") Integer page,
-											   @RequestParam(value = "qtd", defaultValue = "10") Integer qtd) {
+	public ResponseEntity<?> findAllWithParams(
+			@RequestParam(value = "dateStart", required = false)
+			@DateTimeFormat(pattern = "dd/MM/yyyy")
+			@ApiParam(value = "dateStart", example = "25/04/2020") Date dateStart,
+			@RequestParam(value = "dateEnd", required = false)
+			@DateTimeFormat(pattern = "dd/MM/yyyy")
+			@ApiParam(value = "dataEnd", example = "25/04/2020") Date dateEnd,
+			@RequestParam(value = "ip", required = false)
+			@ApiParam(value = "ip", example = "192.168.0.125") String ip,
+			@RequestParam(value = "page", defaultValue = "0") Integer page,
+			@RequestParam(value = "qtd", defaultValue = "10") Integer qtd) {
 
 		try {
 			return ResponseEntity
 					.status(HttpStatus.OK)
 					.body(this.logService.findAllWithParams(
-							Optional.ofNullable(dataStart)
+							Optional.ofNullable(dateStart)
 									.orElse(null),
 							Optional.ofNullable(dateEnd)
 									.orElse(null),
@@ -99,6 +135,13 @@ public class LogController {
 		}
 	}
 
+	/**
+	 * Method do expose a Endpoint to  save a new Log
+	 *
+	 * @param logDTO LogDTO Object to save
+	 * @param errors Errors from the request
+	 * @return A new LogDTO Object saved in the database
+	 */
 	@PostMapping(produces = "application/json", consumes = "application/json")
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Created", response = LogDTO.class),
@@ -106,7 +149,9 @@ public class LogController {
 			@ApiResponse(code = 500, message = "Internal Server Error", response = ResponseStatusException.class)
 	})
 	@ApiOperation(value = "Save a new Log in the database")
-	public ResponseEntity<?> saveOneLog(@Valid @RequestBody LogDTO logDTO, @ApiIgnore Errors errors) {
+	public ResponseEntity<?> saveOneLog(
+			@Valid @RequestBody LogDTO logDTO,
+			@ApiIgnore Errors errors) {
 
 		Slf4jLog.info("=== Save one Log with values: " + logDTO.toString());
 		if (errors.hasErrors()) {
@@ -124,6 +169,14 @@ public class LogController {
 		}
 	}
 
+	/**
+	 * Method do expose a Endpoint to  update a log
+	 *
+	 * @param id     Id to use in the Update
+	 * @param logDTO LogDTO Object to save
+	 * @param errors Errors from the request
+	 * @return no Content if the object was updated
+	 */
 	@PutMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
 	@ApiResponses(value = {
 			@ApiResponse(code = 204, message = "No Content"),
@@ -132,8 +185,10 @@ public class LogController {
 			@ApiResponse(code = 500, message = "Internal Server Error", response = ResponseStatusException.class)
 	})
 	@ApiOperation(value = "Edit one log with the ID in the Path with the values passed on body")
-	public ResponseEntity<?> EditOneLog(@PathVariable(value = "id") Long id,
-										@Valid @RequestBody LogDTO logDTO, @ApiIgnore Errors errors) {
+	public ResponseEntity<?> editOneLog(
+			@PathVariable(value = "id") Long id,
+			@Valid @RequestBody LogDTO logDTO,
+			@ApiIgnore Errors errors) {
 
 		Slf4jLog.info("=== Edit one Log with ID: " + id + " and values: " + logDTO.toString());
 
@@ -166,6 +221,12 @@ public class LogController {
 	}
 
 
+	/**
+	 * Method do expose a Endpoint to  delete a log
+	 *
+	 * @param id ID of the log to be deleted
+	 * @return no Content if the object was deleted
+	 */
 	@DeleteMapping(value = "/{id}", produces = "application/json")
 	@ApiResponses(value = {
 			@ApiResponse(code = 204, message = "No Content"),
@@ -173,7 +234,9 @@ public class LogController {
 			@ApiResponse(code = 500, message = "Internal Server Error", response = ResponseStatusException.class)
 	})
 	@ApiOperation(value = "Remove one Log from the database with the ID in the Path")
-	public ResponseEntity<?> deleteLog(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<?> deleteLog(
+			@PathVariable(value = "id") Long id) {
+
 		Slf4jLog.info("=== Delete one Log with ID: " + id);
 		try {
 			this.logService.deleteLog(id);
@@ -191,6 +254,12 @@ public class LogController {
 		}
 	}
 
+	/**
+	 * Method to return a custom exception object when a validation of the entity goes wrong
+	 *
+	 * @param errors Errors from the request
+	 * @return custom exception object
+	 */
 	private ResponseEntity<BodyValidationErrorAPI> validationErrorAPIResponseEntity(Errors errors) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BodyValidationErrorAPI(
 				HttpStatus.BAD_REQUEST.toString(),
