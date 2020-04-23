@@ -7,12 +7,12 @@ import br.frmurta.log.util.Slf4jLog;
  * @author Fernando Murta
  * @version 0.0.1
  */
-public abstract class CoreException extends Exception {
+public abstract class CoreRuntimeException extends RuntimeException {
 
 	/**
 	 * Constructor
 	 */
-	public CoreException() {
+	public CoreRuntimeException() {
 		super();
 	}
 
@@ -21,7 +21,7 @@ public abstract class CoreException extends Exception {
 	 *
 	 * @param message Message from error
 	 */
-	public CoreException(String message) {
+	public CoreRuntimeException(String message) {
 		super(message);
 		this.logError(message);
 	}
@@ -32,7 +32,7 @@ public abstract class CoreException extends Exception {
 	 * @param message Message from error
 	 * @param error   Caused Error
 	 */
-	public CoreException(String message, Throwable error) {
+	public CoreRuntimeException(String message, Throwable error) {
 		super(message, error);
 		this.logError(message);
 		this.logTrace(error);

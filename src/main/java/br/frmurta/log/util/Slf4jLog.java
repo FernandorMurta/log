@@ -14,7 +14,7 @@ import java.util.List;
  * @version 0.0.1
  */
 @Slf4j
-public class LoggerMessage {
+public class Slf4jLog {
 
 
 	public static final String _PARAM = "================ PARAMETERS ================";
@@ -58,7 +58,7 @@ public class LoggerMessage {
 	 */
 	public static void params(List<Params> listOfParam) {
 		info(_PARAM);
-		listOfParam.forEach(LoggerMessage::infoParam);
+		listOfParam.forEach(Slf4jLog::infoParam);
 	}
 
 	/**
