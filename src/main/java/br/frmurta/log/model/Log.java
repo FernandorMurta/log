@@ -19,26 +19,25 @@ import java.util.Date;
 public class Log implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "globalSequenceGenerator")
-	@SequenceGenerator(name = "globalSequenceGenerator", sequenceName = "global_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@CreationTimestamp
 	private Date createdAt;
 
-	@NotNull
+	@NotNull(message = "Data do Log não pode ser Nulo")
 	private Date logDate;
 
-	@NotNull
+	@NotNull(message = "IP não pode ser Nulo")
 	private String ip;
 
-	@NotNull
+	@NotNull(message = "Request não pode ser Nulo")
 	private String request;
 
-	@NotNull
+	@NotNull(message = "Status não pode ser Nulo")
 	private String status;
 
-	@NotNull
+	@NotNull(message = "User Agent não pode ser Nulo")
 	private String userAgent;
 
 }

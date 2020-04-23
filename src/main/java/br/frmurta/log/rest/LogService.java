@@ -9,4 +9,6 @@ import br.frmurta.log.model.LogDTO;
 public interface LogService {
 
 	LogDTO findOneLog(Long id);
+
+	LogDTO saveLog(LogDTO logDTO);
 }

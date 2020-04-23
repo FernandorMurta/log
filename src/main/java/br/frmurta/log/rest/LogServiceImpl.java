@@ -24,4 +24,9 @@ public class LogServiceImpl implements LogService {
 	public LogDTO findOneLog(Long id) {
 		return LogDTO.fromEntity(this.logRepository.findById(id).orElseThrow(LogNotFoundException::new));
 	}
+
+	@Override
+	public LogDTO saveLog(LogDTO logDTO) {
+		return LogDTO.fromEntity(this.logRepository.save(LogDTO.toEntity(logDTO)));
+	}
 }
