@@ -1,6 +1,11 @@
 package br.frmurta.log.rest;
 
+import br.frmurta.log.model.Log;
 import br.frmurta.log.model.LogDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.Date;
 
 /**
  * @author Fernando Murta
@@ -15,4 +20,6 @@ public interface LogService {
 	void updateLog(Long id, LogDTO logDTO);
 
 	void deleteLog(Long id);
+
+	Page<Log> findAllWithParams(Date dateStart, Date dateEnd, String ip, Pageable pageable);
 }

@@ -2,13 +2,15 @@ package br.frmurta.log.rest;
 
 import br.frmurta.log.exceptions.LogIdDoesNotMatchException;
 import br.frmurta.log.exceptions.LogNotFoundException;
+import br.frmurta.log.model.Log;
 import br.frmurta.log.model.LogDTO;
 import br.frmurta.log.exceptions.BodyValidationErrorAPI;
 import br.frmurta.log.util.Slf4jLog;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -18,6 +20,8 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -26,6 +30,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping(value = LogController._PATH)
+@Api(value = "Log CRUD Controller", produces = "application/json", consumes = "application/json")
 public class LogController {
 
 	static final String _PATH = "/log";
@@ -53,6 +58,41 @@ public class LogController {
 		} catch (LogNotFoundException logNotFoundException) {
 			throw new ResponseStatusException(
 					HttpStatus.NOT_FOUND, logNotFoundException.getMessage(), logNotFoundException);
+		} catch (Exception exception) {
+			throw new ResponseStatusException(
+					HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), exception);
+		}
+	}
+
+	@GetMapping(value = "/find", produces = "application/json")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Success", response = Page.class),
+			@ApiResponse(code = 500, message = "Internal Server Error", response = ResponseStatusException.class)
+	})
+	@ApiOperation(value = "Return A list of Log from the database with the Params used, " +
+			"this list will be returned on content object from Page ")
+	public ResponseEntity<?> findAllWithParams(@RequestParam(value = "dateStart", required = false)
+											   @DateTimeFormat(pattern = "dd/MM/yyyy")
+											   @ApiParam(value = "dataStart", example = "25/04/2020") Date dataStart,
+											   @RequestParam(value = "dateEnd", required = false)
+											   @DateTimeFormat(pattern = "dd/MM/yyyy")
+											   @ApiParam(value = "dataEnd", example = "25/04/2020") Date dateEnd,
+											   @RequestParam(value = "ip", required = false)
+											   @ApiParam(value = "ip", example = "192.168.0.125") String ip,
+											   @RequestParam(value = "page", defaultValue = "0") Integer page,
+											   @RequestParam(value = "qtd", defaultValue = "10") Integer qtd) {
+
+		try {
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(this.logService.findAllWithParams(
+							Optional.ofNullable(dataStart)
+									.orElse(null),
+							Optional.ofNullable(dateEnd)
+									.orElse(null),
+							Optional.ofNullable(ip)
+									.orElse(""),
+							PageRequest.of(page, qtd)));
 		} catch (Exception exception) {
 			throw new ResponseStatusException(
 					HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), exception);
