@@ -40,4 +40,10 @@ public class LogServiceImpl implements LogService {
 		this.logRepository.findById(id).orElseThrow(LogNotFoundException::new);
 		this.logRepository.save(LogDTO.toEntity(logDTO));
 	}
+
+	@Override
+	public void deleteLog(Long id) {
+		this.logRepository.findById(id).orElseThrow(LogNotFoundException::new);
+		this.logRepository.deleteById(id);
+	}
 }

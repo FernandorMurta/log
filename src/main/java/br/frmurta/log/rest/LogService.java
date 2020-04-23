@@ -13,4 +13,6 @@ public interface LogService {
 	LogDTO saveLog(LogDTO logDTO);
 
 	void updateLog(Long id, LogDTO logDTO);
+
+	void deleteLog(Long id);
 }
