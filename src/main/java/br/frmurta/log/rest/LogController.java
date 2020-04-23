@@ -34,6 +34,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -247,6 +248,83 @@ public class LogController {
 
 			throw new ResponseStatusException(
 					HttpStatus.NOT_FOUND, logNotFoundException.getMessage(), logNotFoundException);
+		} catch (Exception exception) {
+
+			throw new ResponseStatusException(
+					HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), exception);
+		}
+	}
+
+	/**
+	 * Method to return all Ips saved in the database
+	 *
+	 * @return LIst of Distinct IPS
+	 */
+	@GetMapping(value = "/get-ips", produces = "application/json")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Success", response = List.class),
+			@ApiResponse(code = 500, message = "Internal Server Error", response = ResponseStatusException.class)
+	})
+	public ResponseEntity<?> findAllDistinctIP() {
+		Slf4jLog.info("=== Find all Distinct IP");
+		try {
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(this.logService.findAllDistinctIps());
+		} catch (Exception exception) {
+
+			throw new ResponseStatusException(
+					HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), exception);
+		}
+	}
+
+	/**
+	 * Method to return list of UserAgent with count in that IP
+	 *
+	 * @param ip IP used to the search
+	 * @return LIst of Distinct IPS
+	 */
+	@GetMapping(value = "/user-agent-dashboard", produces = "application/json")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Success", response = List.class),
+			@ApiResponse(code = 500, message = "Internal Server Error", response = ResponseStatusException.class)
+	})
+	public ResponseEntity<?> userAgentDashboards(
+			@RequestParam(value = "ip")
+			@ApiParam(value = "ip", example = "192.168.0.125") String ip) {
+
+		Slf4jLog.info("=== UserAgentDashboards by IP: " + ip);
+		try {
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(this.logService.userAgentDashboardsByIP(ip));
+		} catch (Exception exception) {
+
+			throw new ResponseStatusException(
+					HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), exception);
+		}
+	}
+
+	/**
+	 * Method to return list of Hour with count in that IP
+	 *
+	 * @param ip IP used to the search
+	 * @return LIst of Distinct IPS
+	 */
+	@GetMapping(value = "/hour-dashboard", produces = "application/json")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Success", response = List.class),
+			@ApiResponse(code = 500, message = "Internal Server Error", response = ResponseStatusException.class)
+	})
+	public ResponseEntity<?> hourDashboards(
+			@RequestParam(value = "ip")
+			@ApiParam(value = "ip", example = "192.168.0.125") String ip) {
+
+		Slf4jLog.info("=== UserAgentDashboards by IP: " + ip);
+		try {
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.body(this.logService.hourDashboardsByIP(ip));
 		} catch (Exception exception) {
 
 			throw new ResponseStatusException(

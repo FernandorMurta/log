@@ -1,11 +1,14 @@
 package br.frmurta.log.rest;
 
+import br.frmurta.log.model.HourDashboard;
 import br.frmurta.log.model.Log;
 import br.frmurta.log.model.LogDTO;
+import br.frmurta.log.model.UserAgentDashboard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Fernando Murta
@@ -54,4 +57,27 @@ public interface LogService {
 	 * @return A Page Object
 	 */
 	Page<Log> findAllWithParams(Date dateStart, Date dateEnd, String ip, Pageable pageable);
+
+	/**
+	 * Method to return all Ips saved in the database
+	 *
+	 * @return LIst of Distinct IPS
+	 */
+	List<String> findAllDistinctIps();
+
+	/**
+	 * Method to return a UserAgentDashboard based in a IP
+	 *
+	 * @param ip IP to use as parameter
+	 * @return List of UserAgent to use in a dashboard
+	 */
+	List<UserAgentDashboard> userAgentDashboardsByIP(String ip);
+
+	/**
+	 * Method to return a UserAgentDashboard based in a IP
+	 *
+	 * @param ip IP to use as parameter
+	 * @return List of Hour to use in a dashboard
+	 */
+	List<HourDashboard> hourDashboardsByIP(String ip);
 }

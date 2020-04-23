@@ -8,6 +8,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Fernando Murta
@@ -55,4 +56,12 @@ public interface LogRepository extends QuerydslPredicateExecutor<Log>, JpaReposi
 	 * @return A Page Object
 	 */
 	Page<Log> findAllByIpContainingOrderByCreatedAt(String ip, Pageable pageable);
+
+	/**
+	 * Return a list of log´s from that IP
+	 *
+	 * @param ip IP to use in search
+	 * @return List of Logs
+	 */
+	List<Log> findAllByIp(String ip);
 }

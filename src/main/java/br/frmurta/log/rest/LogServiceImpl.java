@@ -2,15 +2,26 @@ package br.frmurta.log.rest;
 
 import br.frmurta.log.exceptions.LogIdDoesNotMatchException;
 import br.frmurta.log.exceptions.LogNotFoundException;
+import br.frmurta.log.model.HourDashboard;
 import br.frmurta.log.model.Log;
 import br.frmurta.log.model.LogDTO;
+import br.frmurta.log.model.UserAgentDashboard;
 import br.frmurta.log.repository.LogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.GregorianCalendar;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author Fernando Murta
@@ -98,5 +109,106 @@ public class LogServiceImpl implements LogService {
 			return this.logRepository.findAllByLogDateAfterAndIpContainingOrderByCreatedAt(dateStart, ip, pageable);
 		}
 		return this.logRepository.findAllByLogDateBetweenAndIpContainingOrderByCreatedAt(dateStart, dateEnd, ip, pageable);
+	}
+
+	/**
+	 * Method to return all Ips saved in the database
+	 *
+	 * @return LIst of Distinct IPS
+	 */
+	@Override
+	public List<String> findAllDistinctIps() {
+		return this.logRepository.findAllDistinctIps();
+	}
+
+	/**
+	 * Method to return a UserAgentDashboard based in a IP
+	 *
+	 * @param ip IP to use as parameter
+	 * @return List of UserAgent to use in a dashboard
+	 */
+	@Override
+	public List<UserAgentDashboard> userAgentDashboardsByIP(String ip) {
+
+		List<Log> logs = this.logRepository.findAllByIp(ip);
+
+		return logs.stream()
+				.filter(distinctByKey(Log::getUserAgent))
+				.map(element -> new UserAgentDashboard(
+						element.getUserAgent(),
+						countUserAgentResults(logs, element.getUserAgent())))
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Method to return a UserAgentDashboard based in a IP
+	 *
+	 * @param ip IP to use as parameter
+	 * @return List of Hour to use in a dashboard
+	 */
+	public List<HourDashboard> hourDashboardsByIP(String ip) {
+
+		List<Log> logs = this.logRepository.findAllByIp(ip);
+
+		Function<Log, Integer> functionToDistinctHours = p -> {
+			Calendar calendar = GregorianCalendar.getInstance();
+			calendar.setTime(p.getLogDate());
+			return calendar.get(Calendar.HOUR_OF_DAY);
+		};
+
+		return logs.stream()
+				.filter(distinctByKey(functionToDistinctHours))
+				.map(functionToDistinctHours)
+				.map(element -> new HourDashboard(
+						element,
+						countHoursResults(logs, element)))
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Method to filter a list by some key
+	 *
+	 * @param keyExtractor Key used to be distinct
+	 * @param <T>          Generic object
+	 * @return Predicate to be used as parameter
+	 */
+	private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+
+		Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+		return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+	}
+
+	/**
+	 * Method to count the number os matches on that User Agent Result
+	 *
+	 * @param logs  List of logs
+	 * @param param Parameter used to count
+	 * @return Number of matches
+	 */
+	private static Long countUserAgentResults(List<Log> logs, String param) {
+		Predicate<Log> predicate = log -> log.getUserAgent().equals(param);
+
+		return logs.stream()
+				.filter(predicate)
+				.count();
+	}
+
+	/**
+	 * Method to count the number os matches on that Hour
+	 *
+	 * @param logs  List of logs
+	 * @param param Parameter used to count
+	 * @return Number of matches
+	 */
+	private static Long countHoursResults(List<Log> logs, Integer param) {
+		Predicate<Log> predicate = log -> {
+			Calendar calendar = GregorianCalendar.getInstance();
+			calendar.setTime(log.getLogDate());
+			return calendar.get(Calendar.HOUR_OF_DAY) == param;
+		};
+
+		return logs.stream()
+				.filter(predicate)
+				.count();
 	}
 }
