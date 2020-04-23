@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -24,6 +25,9 @@ public class Log implements Serializable {
 
 	@CreationTimestamp
 	private Date createdAt;
+
+	@UpdateTimestamp
+	private Date updatedAt;
 
 	@NotNull(message = "Data do Log não pode ser Nulo")
 	private Date logDate;

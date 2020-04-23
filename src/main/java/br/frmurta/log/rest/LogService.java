@@ -11,4 +11,6 @@ public interface LogService {
 	LogDTO findOneLog(Long id);
 
 	LogDTO saveLog(LogDTO logDTO);
+
+	void updateLog(Long id, LogDTO logDTO);
 }

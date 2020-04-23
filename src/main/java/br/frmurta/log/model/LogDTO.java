@@ -17,6 +17,8 @@ public class LogDTO {
 
 	private Date createdAt;
 
+	private Date updatedAt;
+
 	@NotNull(message = "Data do Log não pode ser Nulo")
 	private Date logDate;
 
@@ -36,6 +38,7 @@ public class LogDTO {
 		return LogDTO.builder()
 				.id(log.getId())
 				.createdAt(log.getCreatedAt())
+				.updatedAt(log.getUpdatedAt())
 				.logDate(log.getLogDate())
 				.ip(log.getIp())
 				.request(log.getRequest())
@@ -48,6 +51,7 @@ public class LogDTO {
 		return Log.builder()
 				.id(log.getId())
 				.createdAt(log.getCreatedAt())
+				.updatedAt(log.getUpdatedAt())
 				.logDate(log.getLogDate())
 				.ip(log.getIp())
 				.request(log.getRequest())
