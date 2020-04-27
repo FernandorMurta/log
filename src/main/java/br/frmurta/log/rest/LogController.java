@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -265,6 +266,7 @@ public class LogController {
 			@ApiResponse(code = 200, message = "Success", response = List.class),
 			@ApiResponse(code = 500, message = "Internal Server Error", response = ResponseStatusException.class)
 	})
+	@ApiOperation(value = "Lisl all registred IP´s")
 	public ResponseEntity<?> findAllDistinctIP() {
 		Slf4jLog.info("=== Find all Distinct IP");
 		try {
@@ -289,6 +291,7 @@ public class LogController {
 			@ApiResponse(code = 200, message = "Success", response = List.class),
 			@ApiResponse(code = 500, message = "Internal Server Error", response = ResponseStatusException.class)
 	})
+	@ApiOperation(value = "Information about User Agent by IP")
 	public ResponseEntity<?> userAgentDashboards(
 			@RequestParam(value = "ip")
 			@ApiParam(value = "ip", example = "192.168.0.125") String ip) {
@@ -316,6 +319,7 @@ public class LogController {
 			@ApiResponse(code = 200, message = "Success", response = List.class),
 			@ApiResponse(code = 500, message = "Internal Server Error", response = ResponseStatusException.class)
 	})
+	@ApiOperation(value = "Information about Hours by IP")
 	public ResponseEntity<?> hourDashboards(
 			@RequestParam(value = "ip")
 			@ApiParam(value = "ip", example = "192.168.0.125") String ip) {
@@ -325,6 +329,32 @@ public class LogController {
 			return ResponseEntity
 					.status(HttpStatus.OK)
 					.body(this.logService.hourDashboardsByIP(ip));
+		} catch (Exception exception) {
+
+			throw new ResponseStatusException(
+					HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), exception);
+		}
+	}
+
+
+	/**
+	 * @param file File Uploaded
+	 * @return No content
+	 */
+	@ApiResponses(value = {
+			@ApiResponse(code = 204, message = "No Content"),
+			@ApiResponse(code = 500, message = "Internal Server Error", response = ResponseStatusException.class)
+	})
+	@PostMapping("/upload-file")
+	@ApiOperation(value = "Upload a File")
+	public ResponseEntity<?> fileUpload(@RequestParam("file") MultipartFile file) {
+
+		Slf4jLog.info("=== File Upload: ");
+		try {
+			this.logService.uploadFile(file);
+			return ResponseEntity
+					.status(HttpStatus.NO_CONTENT)
+					.build();
 		} catch (Exception exception) {
 
 			throw new ResponseStatusException(

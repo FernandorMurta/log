@@ -6,7 +6,10 @@ import br.frmurta.log.model.LogDTO;
 import br.frmurta.log.model.UserAgentDashboard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -80,4 +83,13 @@ public interface LogService {
 	 * @return List of Hour to use in a dashboard
 	 */
 	List<HourDashboard> hourDashboardsByIP(String ip);
+
+
+	/**
+	 * Method to upload a file
+	 *
+	 * @param file File to be upload
+	 * @throws IOException if file is not found
+	 */
+	void uploadFile(MultipartFile file) throws IOException;
 }

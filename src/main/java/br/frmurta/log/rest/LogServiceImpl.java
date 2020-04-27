@@ -7,17 +7,25 @@ import br.frmurta.log.model.Log;
 import br.frmurta.log.model.LogDTO;
 import br.frmurta.log.model.UserAgentDashboard;
 import br.frmurta.log.repository.LogRepository;
+import br.frmurta.log.util.ReadFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
-import java.util.Calendar;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
+import java.util.List;
+import java.util.Objects;
 import java.util.GregorianCalendar;
+import java.util.Calendar;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -31,6 +39,8 @@ import java.util.stream.Collectors;
 public class LogServiceImpl implements LogService {
 
 	private final LogRepository logRepository;
+
+	private final Path rootLocation = Paths.get("./upload/");
 
 	/**
 	 * Constructor to DI
@@ -163,6 +173,23 @@ public class LogServiceImpl implements LogService {
 						element,
 						countHoursResults(logs, element)))
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Method to upload a file
+	 *
+	 * @param file File to be upload
+	 */
+	@Override
+	public void uploadFile(MultipartFile file) throws IOException {
+
+		Files.copy(file.getInputStream(), this.rootLocation.resolve(Objects.requireNonNull(file.getOriginalFilename())));
+		String path = this.rootLocation.toString();
+		File fileUploaded = new File(path + "\\" + file.getOriginalFilename());
+		ReadFile read = new ReadFile(this.logRepository);
+		read.setFile(fileUploaded);
+		Thread thread = new Thread(read);
+		thread.start();
 	}
 
 	/**
