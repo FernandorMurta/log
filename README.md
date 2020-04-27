@@ -8,11 +8,12 @@ LOG is a Spring Boot Application Written in java
 - Spring Data
 - JPA
 - Hibernate
-- PostgreSQL
+- PostgreSQL (to de database)
 - Swagger Ui
 - Maven Checkstyle Plugin
 - Lombok
 - Maven
+- QueryDSL
 
 
 ## Installation
