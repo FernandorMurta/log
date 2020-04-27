@@ -17,6 +17,9 @@
     <properties>
         <java.version>1.8</java.version>
         <checkstyle-configuration>src/main/resources/checkstyle.xml</checkstyle-configuration>
+        <database-url>jdbc:postgresql://localhost:5432/loginfo</database-url>
+        <database-user>postgres</database-user>
+        <database-passwoord>root</database-passwoord>
     </properties>
 
     <dependencies>

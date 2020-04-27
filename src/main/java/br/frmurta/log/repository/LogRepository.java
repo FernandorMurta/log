@@ -26,7 +26,7 @@ public interface LogRepository extends QuerydslPredicateExecutor<Log>, JpaReposi
 	 * @param pageable  Pageable object with Page and Qtd of results
 	 * @return A Page Object
 	 */
-	Page<Log> findAllByLogDateBetweenAndIpContainingOrderByCreatedAt(Date dateStart, Date dateEnd, String ip, Pageable pageable);
+	Page<Log> findAllByLogDateBetweenAndIpContainingOrderByLogDate(Date dateStart, Date dateEnd, String ip, Pageable pageable);
 
 	/**
 	 * Method to find Logs with parameters
@@ -36,7 +36,7 @@ public interface LogRepository extends QuerydslPredicateExecutor<Log>, JpaReposi
 	 * @param pageable  Pageable object with Page and Qtd of results
 	 * @return A Page Object
 	 */
-	Page<Log> findAllByLogDateAfterAndIpContainingOrderByCreatedAt(Date dateStart, String ip, Pageable pageable);
+	Page<Log> findAllByLogDateAfterAndIpContainingOrderByLogDate(Date dateStart, String ip, Pageable pageable);
 
 	/**
 	 * Method to find Logs with parameters
@@ -46,7 +46,7 @@ public interface LogRepository extends QuerydslPredicateExecutor<Log>, JpaReposi
 	 * @param pageable Pageable object with Page and Qtd of results
 	 * @return A Page Object
 	 */
-	Page<Log> findAllByLogDateBeforeAndIpContainingOrderByCreatedAt(Date dateEnd, String ip, Pageable pageable);
+	Page<Log> findAllByLogDateBeforeAndIpContainingOrderByLogDate(Date dateEnd, String ip, Pageable pageable);
 
 	/**
 	 * Method to find Logs with parameters
@@ -55,7 +55,7 @@ public interface LogRepository extends QuerydslPredicateExecutor<Log>, JpaReposi
 	 * @param pageable Pageable object with Page and Qtd of results
 	 * @return A Page Object
 	 */
-	Page<Log> findAllByIpContainingOrderByCreatedAt(String ip, Pageable pageable);
+	Page<Log> findAllByIpContainingOrderByLogDate(String ip, Pageable pageable);
 
 	/**
 	 * Return a list of log´s from that IP

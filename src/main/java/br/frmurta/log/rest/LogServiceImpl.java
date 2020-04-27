@@ -102,13 +102,13 @@ public class LogServiceImpl implements LogService {
 	@Override
 	public Page<Log> findAllWithParams(Date dateStart, Date dateEnd, String ip, Pageable pageable) {
 		if (dateStart == null && dateEnd == null) {
-			return this.logRepository.findAllByIpContainingOrderByCreatedAt(ip, pageable);
+			return this.logRepository.findAllByIpContainingOrderByLogDate(ip, pageable);
 		} else if (dateStart == null) {
-			return this.logRepository.findAllByLogDateBeforeAndIpContainingOrderByCreatedAt(dateEnd, ip, pageable);
+			return this.logRepository.findAllByLogDateBeforeAndIpContainingOrderByLogDate(dateEnd, ip, pageable);
 		} else if (dateEnd == null) {
-			return this.logRepository.findAllByLogDateAfterAndIpContainingOrderByCreatedAt(dateStart, ip, pageable);
+			return this.logRepository.findAllByLogDateAfterAndIpContainingOrderByLogDate(dateStart, ip, pageable);
 		}
-		return this.logRepository.findAllByLogDateBetweenAndIpContainingOrderByCreatedAt(dateStart, dateEnd, ip, pageable);
+		return this.logRepository.findAllByLogDateBetweenAndIpContainingOrderByLogDate(dateStart, dateEnd, ip, pageable);
 	}
 
 	/**
