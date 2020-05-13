@@ -43,7 +43,7 @@ public class SwaggerConfig {
 	 */
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
-				.title("REST API - Desafio 5A")
+				.title("REST API")
 				.description("CRUD + Batch de Log")
 				.version("0.0.1")
 				.license("--")
